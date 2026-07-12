@@ -41,8 +41,6 @@ xdg-open index.html    # Linux
 # or just double-click index.html
 ```
 
-Or visit the live version: **https://ja7yqns7r4gk6.kimi.page**
-
 ## 🗂️ Repo structure
 
 ```
@@ -59,7 +57,7 @@ Everything you tick or enter is stored **locally in your browser** (`localStorag
 
 ## 📌 About me
 
-**Abderrahmane "HirokiAlgo"** — 16 y/o student from Morocco 🇲🇦
+**Abderrahmane F. "HirokiAlgo"** — 16 y/o student from Morocco 🇲🇦
 Competitive programming · IOI 2027/2028 · German A1→B2 · MIT 2029 🎯
 
 > *"You are building your genius step by step."*
