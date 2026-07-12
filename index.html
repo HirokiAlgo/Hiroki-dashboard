@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HirokiAlgo — Next 3 Chapters</title>
+<style>
+:root{
+  --bg:#05080f; --panel:rgba(13,20,34,.82); --panel2:rgba(18,28,46,.55);
+  --line:rgba(56,189,248,.16); --cyan:#22d3ee; --gold:#f5c518; --red:#ef4444;
+  --green:#22c55e; --yellow:#eab308; --blue:#3b82f6; --grey:#64748b;
+  --text:#dbe7f5; --muted:#8191a8; --dim:#56627a;
+  --mono:ui-monospace,"Cascadia Code","Roboto Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:radial-gradient(1100px 650px at 85% -10%,rgba(34,211,238,.08),transparent 60%),
+             radial-gradient(800px 550px at 0% 8%,rgba(239,68,68,.06),transparent 55%),
+             linear-gradient(180deg,#05080f,#070b14 45%,#05080f);
+  color:var(--text); font-family:"Segoe UI",system-ui,sans-serif; min-height:100vh;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(56,189,248,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.04) 1px,transparent 1px);
+  background-size:44px 44px;mask-image:radial-gradient(circle at 50% 25%,#000,transparent 85%)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
+/* topbar */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(5,8,15,.85);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
+.logo{font-family:var(--mono);font-weight:700;letter-spacing:2px;font-size:14px;color:#fff;display:flex;align-items:center;gap:9px}
+.logo b{color:var(--cyan);text-shadow:0 0 12px rgba(34,211,238,.6)}
+.ring{width:20px;height:20px;border-radius:50%;background:conic-gradient(var(--cyan),var(--blue),var(--red),var(--gold),var(--cyan));animation:spin 6s linear infinite;position:relative}
+.ring::after{content:"";position:absolute;inset:5px;border-radius:50%;background:#05080f}
+@keyframes spin{to{transform:rotate(360deg)}}
+.clock{font-family:var(--mono);font-size:13px;color:var(--gold);margin-left:auto}
+.tb{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--cyan);background:rgba(34,211,238,.07);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;transition:.2s}
+.tb:hover{background:rgba(34,211,238,.18)}
+.tb.gold{color:var(--gold);background:rgba(245,197,24,.07);border-color:rgba(245,197,24,.25)}
+.tb.on{background:rgba(34,197,94,.15);color:var(--green);border-color:rgba(34,197,94,.4)}
+/* hero */
+.hero{margin:24px 0 8px}
+.hero h1{font-size:25px;letter-spacing:1px}
+.hero h1 span{color:var(--cyan);text-shadow:0 0 16px rgba(34,211,238,.45)}
+.hero .sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:5px;letter-spacing:1px}
+/* countdown */
+.cd{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:16px 0 28px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 22px}
+.cd .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:2.5px;color:var(--gold);text-transform:uppercase}
+.cd .nm{font-size:15.5px;font-weight:600;color:#fff;margin:5px 0 2px}
+.cd .dt{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.cd .nums{display:flex;gap:8px}
+.cell{background:rgba(0,0,0,.32);border:1px solid var(--line);border-radius:10px;padding:9px 12px;text-align:center;min-width:58px}
+.cell .n{font-family:var(--mono);font-size:21px;font-weight:700;color:var(--cyan);text-shadow:0 0 12px rgba(34,211,238,.4)}
+.cell .u{font-size:9px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
+/* nav tabs */
+.tabs{display:flex;gap:10px;justify-content:center;margin:26px 0 18px;flex-wrap:wrap}
+.tab{font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:10px 20px;border-radius:30px;cursor:pointer;
+  border:1px solid var(--line);background:rgba(34,211,238,.05);color:var(--muted);transition:.2s}
+.tab:hover{color:var(--cyan)}
+.tab.on{color:#04121a;background:linear-gradient(90deg,var(--cyan),#38bdf8);font-weight:700;box-shadow:0 0 20px rgba(34,211,238,.35)}
+/* phase */
+.phase{margin-bottom:26px;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}}
+.phead{display:flex;align-items:center;gap:18px;background:var(--panel);border:1px solid var(--line);
+  border-radius:16px;padding:20px 24px;position:relative;overflow:hidden}
+.phead::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--cyan),var(--gold))}
+.prog-ring{--p:0;width:88px;height:88px;border-radius:50%;flex-shrink:0;position:relative;
+  background:conic-gradient(var(--cyan) calc(var(--p)*1%),rgba(255,255,255,.07) 0)}
+.prog-ring::after{content:"";position:absolute;inset:9px;border-radius:50%;background:#070c16}
+.prog-ring .rv{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:19px;font-weight:700;color:var(--cyan)}
+.pmeta h2{font-size:20px;color:#fff;letter-spacing:.5px}
+.pmeta h2 .ar{color:var(--gold);font-size:12px;font-family:var(--mono);margin-left:8px}
+.pmeta .pr{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:4px}
+.pmeta .pt{font-size:12px;color:var(--dim);margin-top:5px}
+.pstats{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+.pstat{text-align:center}
+.pstat .v{font-family:var(--mono);font-size:17px;color:#fff;font-weight:700}
+.pstat .l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+/* groups */
+.group-t{font-family:var(--mono);font-size:12px;letter-spacing:2.5px;color:var(--cyan);text-transform:uppercase;margin:20px 4px 10px;display:flex;align-items:center;gap:10px}
+.group-t::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.group-t .ar{color:var(--gold);font-size:11px;letter-spacing:1px}
+/* rows */
+.row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;margin-bottom:8px;
+  background:var(--panel2);border:1px solid var(--line);transition:.15s}
+.row:hover{border-color:rgba(34,211,238,.35)}
+.row.done{opacity:.5}
+.row.done .rt{text-decoration:line-through}
+.row input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.rmain{flex:1;min-width:0}
+.rt{font-size:13.5px;color:#fff;font-weight:600;line-height:1.35}
+.rn{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.45}
+.rdate{font-family:var(--mono);font-size:10.5px;color:var(--gold);white-space:nowrap;text-align:right}
+.rdate small{display:block;color:var(--dim);font-size:9.5px;margin-top:1px}
+.stars{color:var(--gold);font-size:10px;white-space:nowrap;letter-spacing:1px}
+.days{font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.d-ok{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.d-soon{background:rgba(234,179,8,.1);color:var(--yellow);border:1px solid rgba(234,179,8,.3)}
+.d-urg{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.35)}
+.d-done{background:rgba(34,197,94,.14);color:var(--green);border:1px solid rgba(34,197,94,.4)}
+/* measurable mini */
+.meas{display:flex;align-items:center;gap:7px;margin-top:8px}
+.meas input{width:70px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:7px;color:#fff;font-family:var(--mono);font-size:13px;font-weight:700;padding:3px 7px}
+.meas input:focus{outline:none;border-color:var(--cyan)}
+.meas .tg{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.mbar{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;max-width:120px}
+.mbar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .4s}
+.mb{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;border:1px solid var(--line);background:rgba(34,211,238,.07);color:var(--cyan)}
+.mb:hover{background:rgba(34,211,238,.2)}
+.mb.minus{color:var(--red);background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.25)}
+/* footer */
+.foot{text-align:center;padding:30px 0 40px;color:var(--dim);font-family:var(--mono);font-size:11px;letter-spacing:1px;line-height:2}
+.foot .mama{color:var(--gold);font-size:13px}
+#toast{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.tmsg{font-family:var(--mono);font-size:12px;padding:10px 16px;border-radius:10px;color:#fff;background:rgba(10,15,26,.95);border:1px solid var(--cyan);box-shadow:0 0 20px rgba(34,211,238,.3);animation:tin .3s ease}
+@keyframes tin{from{transform:translateX(40px);opacity:0}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:150}
+@media(max-width:680px){
+  .cd{grid-template-columns:1fr;text-align:center}.cd .nums{justify-content:center}
+  .phead{flex-wrap:wrap}.pstats{margin-left:0;width:100%;justify-content:space-around}
+  .row{flex-wrap:wrap}.rdate{text-align:left}
+}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:rgba(56,189,248,.25);border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="logo"><span class="ring"></span> HirokiAlgo <b>// NEXT 3 CHAPTERS</b></div>
+    <div class="clock" id="liveClock">--:--:--</div>
+    <button class="tb gold" id="btnExport">⬇ EXPORT DAY</button>
+    <button class="tb" id="btnAuto">AUTO 23:55: OFF</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>ABDERRAHMANE <span>"HirokiAlgo"</span></h1>
+  <div class="sub">CHAPTER I — SUMMER 2026 · CHAPTER II — 1BAC SM · CHAPTER III — SUMMER 2027 (→ IOI 2027 GERMANY)</div>
+</div>
+
+<div class="cd">
+  <div>
+    <div class="lbl">⏳ Next Event</div>
+    <div class="nm" id="cdName">—</div>
+    <div class="dt" id="cdDate">—</div>
+  </div>
+  <div class="nums">
+    <div class="cell"><div class="n" id="cdD">00</div><div class="u">Days</div></div>
+    <div class="cell"><div class="n" id="cdH">00</div><div class="u">Hrs</div></div>
+    <div class="cell"><div class="n" id="cdM">00</div><div class="u">Min</div></div>
+    <div class="cell"><div class="n" id="cdS">00</div><div class="u">Sec</div></div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="phases"></div>
+
+<div class="foot">
+  <div class="mama">"You are building your genius step by step." — Mama's words 🤍</div>
+  HirokiAlgo · NEXT 3 CHAPTERS · data saved locally in your browser · PROOF OF WORK &gt; PROMISES
+</div>
+
+</div>
+<div id="toast"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+const LS="hirokialgo_3chapters_v1";
+const todayISO=()=>new Date().toISOString().slice(0,10);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const $=id=>document.getElementById(id);
+
+/* ============ DATA — the 3 chapters ============ */
+const PHASES=[
+{
+ id:"summer26", tab:"☀️ SUMMER 2026",
+ title:'Chapter I — Summer 2026', ar:"Foundations",
+ range:"July → September 2026 · Age 16", tag:"Phase 1 — Foundations: German + CP + Identity",
+ groups:[
+  {t:"🎯 Goals", ar:"Targets", items:[
+   {id:"s26_cf1600",  t:"Codeforces 1400 → 1600 (Expert)", d:"2026-09-30", pr:5, n:"Daily 7h CP grind — virtual contests + upsolve", meas:{m:"cf",t:1600,cur:1400,s:10,u:""}},
+   {id:"s26_cses100", t:"CSES — 100 problems solved",       d:"2026-09-30", pr:5, n:"Core problem set — all topics", meas:{m:"cses",t:100,cur:0,s:1,u:""}},
+   {id:"s26_deA1",    t:"German A1 complete",               d:"2026-09-30", pr:5, n:"DW Learn German (free) — 2.25h/day — PRIORITY #1"},
+   {id:"s26_vc",      t:"1 virtual contest per week",       d:"2026-09-30", pr:4, n:"Continuous — 4+ per month", meas:{m:"vc26",t:12,cur:0,s:1,u:""}},
+   {id:"s26_math",    t:"Preview 1Bac SM math curriculum",  d:"2026-09-30", pr:4, n:"1–2h daily — arrive ahead of the class"},
+   {id:"s26_health",  t:"Health protocol",                  d:"2026-09-30", pr:5, n:"Sleep 8h · exercise 30min · 1 rest day/week · Quran & Salat"},
+  ]},
+  {t:"📅 Events", ar:"Milestones", items:[
+   {id:"s26_accounts", t:"Unify digital identity — HirokiAlgo", d:"2026-07-31", pr:5, n:"GitHub (hirokialgo) · X · Discord · Codeforces · AtCoder · LeetCode · TopCoder + new email + 2FA + Bitwarden"},
+   {id:"s26_repo",     t:"Create GitHub repo «IOI-Training-Dashboard»", d:"2026-07-31", pr:4, n:"Professional README + first commit"},
+   {id:"s26_satmock",  t:"SAT Mock Test #1",                 d:"2026-08-31", pr:4, n:"Khan Academy — 4h full simulation + weak-point analysis"},
+   {id:"s26_rpi",      t:"Buy Raspberry Pi 4 (8GB)",         d:"2026-09-30", pr:4, n:"$80–100 — brain of Jarvis OS · Iron Man Suite month 1"},
+  ]},
+ ]},
+{
+ id:"bac1", tab:"🎓 1BAC SM",
+ title:'Chapter II — 1Bac SM', ar:"MOI Season",
+ range:"October 2026 → June 2027 · Age 16→17", tag:"Phase 2 — MOI season + Candidate Master + A2 + SAT",
+ groups:[
+  {t:"🎓 Academic", ar:"Studies", items:[
+   {id:"b1_bac",   t:"1Bac SM: 18+/20",              d:"2027-06-30", pr:5, n:"Math + Physics dominance — 2–3h daily", meas:{m:"bac1",t:18,cur:0,s:0.25,u:"/20"}},
+  ]},
+  {t:"⚡ Competitive Programming", ar:"CP", items:[
+   {id:"b1_moi1",  t:"MOI 2027 — Round 1 (qualify)", d:"2026-11-15", pr:5, n:"Moroccan Olympiad — registration follow-up"},
+   {id:"b1_moi2",  t:"MOI 2027 — Round 2",           d:"2027-02-28", pr:5, n:"Jan/Feb 2027"},
+   {id:"b1_camp",  t:"MOI 2027 — Training Camp",     d:"2027-05-31", pr:5, n:"Apr/May 2027 — national team selection"},
+   {id:"b1_cses200",t:"CSES — 200 problems",          d:"2027-02-28", pr:5, n:"Full problem set"},
+   {id:"b1_usaco", t:"USACO Gold Division",          d:"2027-02-28", pr:4, n:"Promotion before Feb ends"},
+   {id:"b1_cf1900",t:"Codeforces 1600 → 1900 (Candidate Master)", d:"2027-06-30", pr:5, n:"Consistent +50–100/month", meas:{m:"cf",t:1900,cur:1400,s:10,u:""}},
+  ]},
+  {t:"🌍 Languages & Tests", ar:"Languages", items:[
+   {id:"b1_deA2",  t:"German A2 complete",           d:"2026-12-31", pr:5, n:"DW Learn German"},
+   {id:"b1_deB1s", t:"German B1 — start",            d:"2027-01-31", pr:5, n:"DW + Goethe materials"},
+   {id:"b1_sat1",  t:"SAT Test #1: 1500+",           d:"2026-12-31", pr:4, n:"Oct/Dec 2026 sitting", meas:{m:"sat",t:1500,cur:0,s:10,u:""}},
+   {id:"b1_sat2",  t:"SAT Test #2: 1550+",           d:"2027-05-31", pr:4, n:"Mar/May 2027 sitting"},
+  ]},
+  {t:"🏛️ MIT & 1337 & Documents", ar:"Applications", items:[
+   {id:"b1_essays",t:"MIT essays — brainstorm & drafts", d:"2027-06-30", pr:4, n:"Jan → Jun 2027"},
+   {id:"b1_recs",  t:"2 recommendation letters",     d:"2027-05-31", pr:4, n:"Math + Physics teachers"},
+   {id:"b1_piscine1",t:"1337 — apply for Piscine",    d:"2027-03-31", pr:4, n:"Feb/Mar 2027"},
+   {id:"b1_piscine2",t:"1337 — finish Piscine",       d:"2027-05-31", pr:4, n:"Apr/May 2027"},
+   {id:"b1_cnie",  t:"CNIE — National ID",           d:"2027-05-31", pr:4, n:"Official document #1"},
+   {id:"b1_pass",  t:"Passport",                     d:"2027-05-31", pr:4, n:"Needed for IOI 2027 🇩🇪"},
+  ]},
+ ]},
+{
+ id:"summer27", tab:"🌅 SUMMER 2027",
+ title:'Chapter III — Summer 2027', ar:"Road to IOI",
+ range:"July → September 2027 · Age 18", tag:"Phase 3 — MASTER rating + B1 + IOI 2027 Germany 🇩🇪",
+ groups:[
+  {t:"🏆 The Big One", ar:"Main Event", items:[
+   {id:"s27_ioi",   t:"🇩🇪 IOI 2027 — Germany (Sept 12–19)", d:"2027-09-12", pr:5, n:"Goal: participation + experience. Live it. Learn everything."},
+  ]},
+  {t:"⚡ Competitive Programming", ar:"CP", items:[
+   {id:"s27_cf2100",t:"Codeforces 1900 → 2100 (Master)", d:"2027-09-30", pr:5, n:"The Master climb — hard problems + analysis", meas:{m:"cf",t:2100,cur:1400,s:10,u:""}},
+   {id:"s27_ioipast",t:"Solve past IOI problems 2015–2026", d:"2027-09-30", pr:4, n:"Full archive — subtask by subtask", meas:{m:"ioipast",t:12,cur:0,s:1,u:" years"}},
+  ]},
+  {t:"🌍 Languages", ar:"Languages", items:[
+   {id:"s27_deB1",  t:"German B1 complete",          d:"2027-09-30", pr:5, n:"DW + Goethe — the exit key"},
+   {id:"s27_toefl", t:"TOEFL preparation",           d:"2027-09-30", pr:4, n:"Start structured prep — target 110+ by May 2028"},
+  ]},
+  {t:"📄 Documents (if not done)", ar:"Papers", items:[
+   {id:"s27_cnie",  t:"CNIE (fallback deadline)",    d:"2027-07-31", pr:4, n:"If not done in May"},
+   {id:"s27_pass",  t:"Passport (IOI confirmed)",    d:"2027-08-31", pr:4, n:"Must be in hand before Germany"},
+  ]},
+ ]},
+];
+
+/* ============ STATE ============ */
+let S={checks:{},metrics:{},autoExport:false,lastAuto:""};
+try{const raw=JSON.parse(localStorage.getItem(LS)); if(raw) Object.assign(S,raw);}catch(e){}
+function save(){localStorage.setItem(LS,JSON.stringify(S));}
+PHASES.forEach(p=>p.groups.forEach(g=>g.items.forEach(it=>{
+  if(it.meas && S.metrics[it.meas.m]===undefined) S.metrics[it.meas.m]=it.meas.cur;
+})));
+
+/* ============ HELPERS ============ */
+function toast(m){const t=document.createElement("div");t.className="tmsg";t.textContent=m;$("toast").appendChild(t);setTimeout(()=>t.remove(),3000);}
+function daysLeft(d){return Math.ceil((new Date(d)-new Date())/864e5);}
+function daysBadge(d,done){
+  if(done) return '<span class="days d-done">DONE ✓</span>';
+  const n=daysLeft(d);
+  if(n<0) return '<span class="days d-urg">OVERDUE</span>';
+  const cls=n<45?"d-urg":n<150?"d-soon":"d-ok";
+  return `<span class="days ${cls}">${n}d left</span>`;
+}
+const starStr=n=>"★".repeat(n)+"☆".repeat(5-n);
+
+/* ============ RENDER ============ */
+let currentTab="summer26";
+function renderTabs(){
+  $("tabs").innerHTML=PHASES.map(p=>`<div class="tab ${p.id===currentTab?"on":""}" data-tab="${p.id}">${p.tab}</div>`).join("");
+  $("tabs").querySelectorAll(".tab").forEach(t=>t.onclick=()=>{currentTab=t.dataset.tab;renderTabs();renderPhase();});
+}
+function phaseStats(p){
+  let total=0,done=0;
+  p.groups.forEach(g=>g.items.forEach(it=>{total++; if(S.checks[it.id]) done++;}));
+  return {total,done,pct:total?Math.round(done/total*100):0};
+}
+function renderPhase(){
+  const p=PHASES.find(x=>x.id===currentTab);
+  const st=phaseStats(p);
+  let h=`<div class="phase">
+   <div class="phead">
+    <div class="prog-ring" style="--p:${st.pct}"><div class="rv">${st.pct}%</div></div>
+    <div class="pmeta">
+      <h2>${p.title} <span class="ar">// ${p.ar}</span></h2>
+      <div class="pr">${p.range}</div>
+      <div class="pt">${p.tag}</div>
+    </div>
+    <div class="pstats">
+      <div class="pstat"><div class="v">${st.done}/${st.total}</div><div class="l">Done</div></div>
+      <div class="pstat"><div class="v">${p.groups.reduce((a,g)=>a+g.items.filter(i=>i.pr===5).length,0)}</div><div class="l">★★★★★ Goals</div></div>
+    </div>
+   </div>`;
+  p.groups.forEach(g=>{
+    h+=`<div class="group-t">${g.t} <span class="ar">// ${g.ar}</span></div>`;
+    g.items.forEach(it=>{
+      const done=!!S.checks[it.id];
+      let meas="";
+      if(it.meas){
+        const v=S.metrics[it.meas.m]??it.meas.cur;
+        const pct=clamp(v/it.meas.t*100,0,100);
+        meas=`<div class="meas">
+          <input type="number" step="${it.meas.s}" value="${v}" data-mm="${it.meas.m}">
+          <span class="tg">/ ${it.meas.t}${it.meas.u}</span>
+          <div class="mbar"><i style="width:${pct}%"></i></div>
+          <button class="mb minus" data-mb="${it.meas.m}" data-d="-1">−${it.meas.s}</button>
+          <button class="mb" data-mb="${it.meas.m}" data-d="1">+${it.meas.s}</button>
+        </div>`;
+      }
+      h+=`<div class="row ${done?"done":""}">
+        <input type="checkbox" data-chk="${it.id}" ${done?"checked":""}>
+        <div class="rmain"><div class="rt">${it.t}</div><div class="rn">${it.n}</div>${meas}</div>
+        <div class="rdate">${new Date(it.d).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})}<small>${starStr(it.pr)}</small></div>
+        ${daysBadge(it.d,done)}
+      </div>`;
+    });
+  });
+  h+="</div>";
+  $("phases").innerHTML=h;
+  $("phases").querySelectorAll("[data-chk]").forEach(c=>c.onchange=()=>{
+    S.checks[c.dataset.chk]=c.checked; save(); renderPhase();
+    if(c.checked){toast("✅ Logged, Hiroki.");confetti();}
+  });
+  $("phases").querySelectorAll("[data-mb]").forEach(b=>b.onclick=()=>{
+    const it=findMeas(b.dataset.mb);
+    S.metrics[it.meas.m]=clamp(Math.round((S.metrics[it.meas.m]+it.meas.s*+b.dataset.d)*100)/100,0,99999);
+    save(); renderPhase();
+    if(S.metrics[it.meas.m]>=it.meas.t){toast("🎯 TARGET HIT!");confetti();}
+  });
+  $("phases").querySelectorAll("[data-mm]").forEach(i=>i.onchange=()=>{
+    S.metrics[i.dataset.mm]=clamp(parseFloat(i.value)||0,0,99999); save(); renderPhase();
+  });
+}
+function findMeas(m){for(const p of PHASES)for(const g of p.groups)for(const it of g.items)if(it.meas&&it.meas.m===m)return it;}
+
+/* ============ COUNTDOWN ============ */
+function allEvents(){
+  const ev=[];
+  PHASES.forEach(p=>p.groups.forEach(g=>g.items.forEach(it=>ev.push({d:it.d,t:it.t,done:!!S.checks[it.id]}))));
+  return ev;
+}
+function tick(){
+  const now=new Date();
+  $("liveClock").textContent=now.toLocaleTimeString("en-GB");
+  const ups=allEvents().filter(e=>!e.done && new Date(e.d)>=new Date(todayISO())).sort((a,b)=>a.d<b.d?-1:1);
+  if(ups.length){
+    const tg=new Date(ups[0].d+"T00:00:00"), diff=Math.max(0,tg-now);
+    $("cdName").textContent=ups[0].t;
+    $("cdDate").textContent=tg.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+    $("cdD").textContent=String(Math.floor(diff/864e5)).padStart(2,"0");
+    $("cdH").textContent=String(Math.floor(diff/36e5)%24).padStart(2,"0");
+    $("cdM").textContent=String(Math.floor(diff/6e4)%60).padStart(2,"0");
+    $("cdS").textContent=String(Math.floor(diff/1e3)%60).padStart(2,"0");
+  }else{$("cdName").textContent="All 3 chapters complete 🏆";["cdD","cdH","cdM","cdS"].forEach(i=>$(i).textContent="00");}
+  if(S.autoExport && now.getHours()===23 && now.getMinutes()===55 && S.lastAuto!==todayISO()){
+    S.lastAuto=todayISO(); save(); doExport(true);
+  }
+}
+
+/* ============ EXPORT ============ */
+function doExport(auto){
+  const t=todayISO();
+  const payload={
+    app:"HirokiAlgo — Next 3 Chapters", user:"Abderrahmane",
+    date:t, exportedAt:new Date().toLocaleString("en-GB"), autoExport:!!auto,
+    progress:PHASES.map(p=>({chapter:p.title,...phaseStats(p)})),
+    doneItems:Object.keys(S.checks).filter(k=>S.checks[k]),
+    metrics:S.metrics,
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=`hirokialgo_${t}.json`; a.click();
+  URL.revokeObjectURL(a.href);
+  toast(auto?"🌙 23:55 auto-export done":"⬇ Day exported");
+  if(auto) confetti();
+}
+function initButtons(){
+  $("btnExport").onclick=()=>doExport(false);
+  const ab=$("btnAuto");
+  const paint=()=>{ab.textContent="AUTO 23:55: "+(S.autoExport?"ON":"OFF");ab.classList.toggle("on",S.autoExport);};
+  paint();
+  ab.onclick=()=>{S.autoExport=!S.autoExport;save();paint();toast(S.autoExport?"🌙 Auto-export armed for 23:55":"Auto-export off");};
+}
+
+/* ============ CONFETTI ============ */
+let busy=false;
+function confetti(){
+  if(busy)return; busy=true;
+  const cv=$("confetti"),ctx=cv.getContext("2d");
+  cv.width=innerWidth;cv.height=innerHeight;
+  const cols=["#22d3ee","#f5c518","#ef4444","#22c55e","#ffffff"];
+  const ps=Array.from({length:120},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight/2,
+    vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:Math.random()*6+3,
+    c:cols[Math.random()*cols.length|0],r:Math.random()*6,vr:(Math.random()-.5)*.3,life:1}));
+  let f=0;(function loop(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.r+=p.vr;p.life-=.012;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.globalAlpha=Math.max(0,p.life);
+      ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);ctx.restore();});
+    if(++f<90)requestAnimationFrame(loop);else{ctx.clearRect(0,0,cv.width,cv.height);busy=false;}
+  })();
+}
+
+/* ============ INIT ============ */
+renderTabs(); renderPhase(); initButtons(); tick();
+setInterval(tick,1000);
+setTimeout(()=>toast("🤖 Systems online — 3 chapters loaded"),500);
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local progress exports (personal data — keep out of the repo)
+hirokialgo_*.json
+*.local.json
+
+# Editors
+.vscode/
+.idea/
